@@ -1,0 +1,11 @@
+flask
+flask_sqlalchemy
+flask_swagger_ui
+safrs
+Flask-Caching
+flask-compress
+werkzeug
+pyopenssl
+flask_oauthlib
+pyyaml
+psycopg2-binary

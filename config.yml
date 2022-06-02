@@ -1,0 +1,4 @@
+---
+ProxiedHost: localhost:5555
+DB: sqlite:///zarcioplaner.db
+Debug: true
