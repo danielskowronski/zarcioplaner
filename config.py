@@ -6,6 +6,9 @@ cfg = yaml.full_load(file)
 DB_URI         = cfg['DB']
 DEBUG_ENABLED  = cfg['Debug']
 
+PERSON1 = cfg['Person1']
+PERSON2 = cfg['Person2']
+
 from flask import Flask
 from flask_caching import Cache
 from flask_compress import Compress

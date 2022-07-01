@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+  <title>żarcioplan #{{ plan_id }}</title>
+  <script src="/static/jquery.min.js"></script>
+  <script src="/static/bootstrap.min.js"></script>
+  <script src="/static/json-api-store.prod.js"></script>
+  <link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="/static/style.css" />
+  <link rel="stylesheet" type="text/css" href="/scloud_assets/scloud.css" />
+  <link rel="icon" type="image/png" href="/static/dish.png">
+</head>
+<body>
+  <table id="headerTable">
+    <tr>
+      <td class="l">
+        <h1>
+          <img src="/static/dish.png" height="64px" />
+          <b>żarcioplan #{{ plan_id }}</b>
+        </h1>
+      </td>
+  </table>
+
+  <i>{{ plan_notes }}</i>
+  <br /><br />
+
+  <table border=4>
+    <tr>
+      <th colspan=2>ŻARCIOPLAN</th>
+      <th>{{ person1 }}</th>
+      <th>{{ person2 }}</th>
+    </tr>
+    {% for date in range(plan_start, plan_end+1) %}
+    <tr>
+      <td>{{ formatDate(date) }}</td>
+      <td>{{ getWeekDay(date) }}</td>
+      <td data-date="{{ date }}" data-person="1">x</td>
+      <td data-date="{{ date }}" data-person="2">x</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+<script>
+</script>
+</body>
+</html>
