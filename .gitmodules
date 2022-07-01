@@ -1,0 +1,6 @@
+[submodule "scloud_assets"]
+	path = scloud_assets
+	url = git@github.com:skowronski-cloud/scloud_assets.git
+[submodule "static/scloud_assets"]
+	path = static/scloud_assets
+	url = git@github.com:skowronski-cloud/scloud_assets.git

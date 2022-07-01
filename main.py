@@ -20,6 +20,9 @@ def index():
 @app.route("/static/<path:path>")
 def send_static(path):
   return send_from_directory("static", path)
+@app.route("/scloud_assets/<path:path>")
+def send_scloud_assets(path):
+  return send_from_directory("scloud_assets", path)
 @app.route("/fonts/<path:path>")
 def send_fonts(path):
   return send_from_directory("fonts", path)

@@ -1,6 +1,46 @@
-html, body{
-  padding-left: 10px;
-  padding-right: 10px;
-  zoom: 115%;
-  font-family: "Ubuntu";
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 400;
+  src: url(/scloud_assets/Ubuntu.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Ubuntu Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: url(/scloud_assets/UbuntuMono.woff2) format('woff2');
+}
+
+html, body {
+  font-size: large;
+  font-family: 'Ubuntu', sans-serif;
+  padding: 10px;
+}
+pre, kbd{
+  font-family: 'Ubuntu Mono', monospace;
+}
+
+a {
+  color:  #2e3e80;
+  padding: 2px;
+  margin:  2px;
+  text-decoration: none;
+}
+a:hover {
+  color: white;
+  background: #2e3e80;
+  text-decoration: none;
+}
+
+.logo {
+  height: 128px;
+}
+ul, ol, h4, h3, h2, h1{
+  margin-top: 0.5em;
+  margin-bottom: 0.25em;
+}
+
+.editTableFieldName{
+  text-align: right;
+  padding-right: 5px;
 }
