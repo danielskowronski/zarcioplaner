@@ -23,9 +23,6 @@ def send_static(path):
 @app.route("/scloud_assets/<path:path>")
 def send_scloud_assets(path):
   return send_from_directory("scloud_assets", path)
-@app.route("/fonts/<path:path>")
-def send_fonts(path):
-  return send_from_directory("fonts", path)
 
 if __name__ == "__main__":
   HOST = sys.argv[1] if len(sys.argv) == 3 else "localhost"

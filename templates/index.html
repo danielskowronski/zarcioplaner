@@ -69,20 +69,20 @@
 
   function editPlan(id){
     if (id<0 || id=="new"){
-        $("#editPlanIDField     span").html("new")
-        $("#editPlanIDField     input").val("")
-        $("#editPlanStartField  input").val("")
-        $("#editPlanEndField    input").val("")
+        $("#editPlanIDField        span").html("new")
+        $("#editPlanIDField        input").val("")
+        $("#editPlanStartField     input").val("")
+        $("#editPlanEndField       input").val("")
         $("#editPlanNotesField  textarea").val("")
 
         $("#editPlan").modal()
     }
     else {
       store.load("Plan",id,{ include: "" }).subscribe(function (plan) {
-        $("#editPlanIDField     span").html(plan.id)
-        $("#editPlanIDField     input").val(plan.id)
-        $("#editPlanStartField  input").val(plan.start)
-        $("#editPlanEndField    input").val(plan.end)
+        $("#editPlanIDField        span").html(plan.id)
+        $("#editPlanIDField        input").val(plan.id)
+        $("#editPlanStartField     input").val(plan.start)
+        $("#editPlanEndField       input").val(plan.end)
         $("#editPlanNotesField  textarea").val(plan.notes)
 
         $("#editPlan").modal()
@@ -90,17 +90,18 @@
     }
   }
   function savePlan(){
-    var planID=$("#editPlanIDField  span").html();
+    var planID=$("#editPlanIDField    span").html();
     var planFromEditor={
-      start:  $("#editPlanStartField  input").val(),
-      end:    $("#editPlanEndField    input").val(),
-      notes:  $("#editPlanNotesField  input").val(),
+      start:  $("#editPlanStartField     input").val(),
+      end:    $("#editPlanEndField       input").val(),
+      notes:  $("#editPlanNotesField  textarea").val(),
     };
 
     if (planFromEditor.start.match(/\d+$/) == null) { alert("Wrong start date"); return false; }
     if (planFromEditor.start<20220101 || planFromEditor.start>21221231) { alert("Wrong start date"); return false; }
     if (planFromEditor.end.match(/\d+$/)   == null) { alert("Wrong end date");   return false; }
     if (planFromEditor.end<20220101 || planFromEditor.end>21221231) { alert("Wrong end date"); return false; }
+    if (planFromEditor.end<planFromEditor.start) { alert("end date cannot be before start date"); return false; }
 
     if (planID<0 || planID=="new"){
       store.create("Plan", planFromEditor).subscribe(function (plan) {
@@ -123,8 +124,11 @@
     $("#plansList").html("");
     store.loadAll(
       "Plan", 
-      { include: "" }
+      { sort: "start" }
     ).subscribe(function (Plans) {
+      Plans.sort(function(a, b) {
+        return a.start>b.start;
+      });
       $.each( Plans, function( idx, plan ) {
         var start = formatDate(plan.start)
         var end   = formatDate(plan.end)
