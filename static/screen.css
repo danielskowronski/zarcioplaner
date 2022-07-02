@@ -22,3 +22,7 @@ ul, ol, h4, h3, h2, h1{
   text-align: right;
   padding-right: 5px;
 }
+
+.date_header, .date, .weekday, .together, .person {
+  padding: 5px;
+}

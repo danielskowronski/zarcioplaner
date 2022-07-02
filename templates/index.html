@@ -6,7 +6,9 @@
   <script src="/static/bootstrap.min.js"></script>
   <script src="/static/json-api-store.prod.js"></script>
   <link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="/static/style.css" />
+  <link rel="stylesheet" type="text/css" href="/static/common.css" />
+  <link rel="stylesheet" type="text/css" href="/static/screen.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="/static/print.css" media="print" />
   <link rel="icon" type="image/png" href="/static/dish.png">
 </head>
 <body>
@@ -18,10 +20,11 @@
           <b>żarcioplaner</b>
         </h1>
       </td>
+      <td class="r">
+        <button type='button' class='btn-for-writer btn btn-lg btn-success' onClick='editPlan(-1)'>Add plan</button>
+      </td>
   </table>
 
-  <button type='button' class='btn-for-writer btn btn-success' onClick='editPlan(-1)'>Add plan</button>
-  <br />
   <ul id="plansList">
 
   </ul>
@@ -45,6 +48,7 @@
               <tr><td class="editTableFieldName">start</td>  <td id="editPlanStartField"><input type="number" min="20220000" max="212200" /></tr>
               <tr><td class="editTableFieldName">end</td>    <td id="editPlanEndField"><input type="number" min="20220000" max="212200" /></tr>
               <tr><td class="editTableFieldName">notes</td>  <td id="editPlanNotesField"><textarea rows="2" cols="30"></textarea></tr> 
+              <tr><td class="editTableFieldName">image</td>  <td id="editPlanImgField"><textarea rows="1" cols="30"></textarea></tr> 
             </table>
           </td>
           </tr>
@@ -75,6 +79,7 @@ function editPlan(id){
       $("#editPlanStartField     input").val("")
       $("#editPlanEndField       input").val("")
       $("#editPlanNotesField  textarea").val("")
+      $("#editPlanImgField    textarea").val("")
 
       $("#editPlan").modal()
   }
@@ -85,6 +90,7 @@ function editPlan(id){
       $("#editPlanStartField     input").val(plan.start)
       $("#editPlanEndField       input").val(plan.end)
       $("#editPlanNotesField  textarea").val(plan.notes)
+      $("#editPlanImgField    textarea").val(plan.img)
 
       $("#editPlan").modal()
     });
@@ -96,6 +102,7 @@ function savePlan(){
     start:  $("#editPlanStartField     input").val(),
     end:    $("#editPlanEndField       input").val(),
     notes:  $("#editPlanNotesField  textarea").val(),
+    img:    $("#editPlanImgField    textarea").val(),
   };
 
   if (planFromEditor.start.match(/\d+$/) == null) { alert("Wrong start date"); return false; }
@@ -174,6 +181,7 @@ store.define([ "Plan" ], {
   start: Store.attr(),
   end:   Store.attr(),
   notes: Store.attr(),
+  img  : Store.attr(),
 });
 
 store.observable.subscribe(function (event) {

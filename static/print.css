@@ -1,21 +1,31 @@
 @page {
   size: A4 landscape;
+  vertical-align: bottom;
 }
 
 #headerTable, .noPrint, .together, button {
   display: none !important;
 }
 
-td, th {
-  padding-top:  0;
-  padding-bottom:  0;
+.date_header, .date, .weekday, .together, .person {
+  padding: 2px;
 }
 
-html, body {
-  padding: 0px;
+body {
+  padding: 2px;
+  position: absolute;
+  bottom: 10px;
 }
 
 .date_header { width: 20%; }
 .date        { width: 10%; }
 .weekday     { width: 10%; }
 .person      { width: 40%; }
+
+#img {
+  object-fit: scale-down;
+}
+
+#img {
+  height:  10em;
+}

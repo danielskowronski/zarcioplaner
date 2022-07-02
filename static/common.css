@@ -22,7 +22,6 @@ pre, kbd{
 
 .date_header, .date, .weekday, .together, .person {
   border:  1px solid black;
-  padding: 5px;
 }
 .date_header, .together, .person {
   text-align: center;
@@ -43,4 +42,18 @@ pre, kbd{
 }
 .r {
   text-align: right;
+}
+
+#planTable{
+  width: 100%;
+}
+
+#img {
+  padding: 10px;
+  width:  100%;
+  height:  10em;
+  text-align: center;
+}
+#img img {
+  height: 100%;
 }
