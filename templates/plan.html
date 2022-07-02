@@ -6,7 +6,9 @@
   <script src="/static/bootstrap.min.js"></script>
   <script src="/static/json-api-store.prod.js"></script>
   <link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="/static/style.css" />
+  <link rel="stylesheet" type="text/css" href="/static/common.css" />
+  <link rel="stylesheet" type="text/css" href="/static/screen.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="/static/print.css" media="print" />
   <link rel="icon" type="image/png" href="/static/dish.png">
 </head>
 <body>
@@ -15,15 +17,19 @@
       <td class="l">
         <h1>
           <img src="/static/dish.png" height="64px" />
-          <b>żarcioplan #{{ plan_id }}</b>
+          <b><a href="/">żarcioplaner</a> - żarcioplan #{{ plan_id }}</b>
         </h1>
       </td>
+      <td class="r">
+        <button type='button' class='btn-for-writer btn btn-lg btn-success' onClick='print()'>Print</button>
+      </td>
   </table>
-
-  <i>{{ plan_notes }}</i>
-  <br /><br />
-  <button type='button' class='btn-for-writer btn btn-success' onClick='alert("not yet implemenetd");print()'>Print</button>
-  <br /><br />
+  <div class="noPrint">
+    <i>{{ plan_notes }}</i>
+    <br />
+    
+    <br /><br />
+  </div>
 
   <table>
     <tr>

@@ -1,0 +1,21 @@
+@page {
+  size: A4 landscape;
+}
+
+#headerTable, .noPrint, .together, button {
+  display: none !important;
+}
+
+td, th {
+  padding-top:  0;
+  padding-bottom:  0;
+}
+
+html, body {
+  padding: 0px;
+}
+
+.date_header { width: 20%; }
+.date        { width: 10%; }
+.weekday     { width: 10%; }
+.person      { width: 40%; }

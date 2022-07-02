@@ -20,32 +20,6 @@ pre, kbd{
   font-family: 'Ubuntu Mono', monospace;
 }
 
-a {
-  color:  #2e3e80;
-  padding: 2px;
-  margin:  2px;
-  text-decoration: none;
-}
-a:hover {
-  color: white;
-  background: #2e3e80;
-  text-decoration: none;
-}
-
-.logo {
-  height: 128px;
-}
-ul, ol, h4, h3, h2, h1{
-  margin-top: 0.5em;
-  margin-bottom: 0.25em;
-}
-
-.editTableFieldName{
-  text-align: right;
-  padding-right: 5px;
-}
-
-
 .date_header, .date, .weekday, .together, .person {
   border:  1px solid black;
   padding: 5px;
@@ -61,4 +35,12 @@ ul, ol, h4, h3, h2, h1{
 }
 .person {
   width: 32em;
+}
+
+#headerTable {
+  width: 100%;
+  padding: 10px;
+}
+.r {
+  text-align: right;
 }
