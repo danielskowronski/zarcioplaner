@@ -59,126 +59,126 @@
   </div>
 
 <script>
-  var adapter = new Store.AjaxAdapter({ base: "/api" });
-  var store = new Store(adapter);
+var adapter = new Store.AjaxAdapter({ base: "/api" });
+var store = new Store(adapter);
 
-  function formatDate(raw){
-    var raw_str=`${raw}`;
-    if (raw_str.length!=8) return "????-??-??";
-    return ""+raw_str.substr(0,4)+"-"+raw_str.substr(4,2)+"-"+raw_str.substr(6,2);
+function formatDate(raw){
+  var raw_str=`${raw}`;
+  if (raw_str.length!=8) return "????-??-??";
+  return ""+raw_str.substr(0,4)+"-"+raw_str.substr(4,2)+"-"+raw_str.substr(6,2);
+}
+
+function editPlan(id){
+  if (id<0 || id=="new"){
+      $("#editPlanIDField        span").html("new")
+      $("#editPlanIDField        input").val("")
+      $("#editPlanStartField     input").val("")
+      $("#editPlanEndField       input").val("")
+      $("#editPlanNotesField  textarea").val("")
+
+      $("#editPlan").modal()
   }
+  else {
+    store.load("Plan",id,{ include: "" }).subscribe(function (plan) {
+      $("#editPlanIDField        span").html(plan.id)
+      $("#editPlanIDField        input").val(plan.id)
+      $("#editPlanStartField     input").val(plan.start)
+      $("#editPlanEndField       input").val(plan.end)
+      $("#editPlanNotesField  textarea").val(plan.notes)
 
-  function editPlan(id){
-    if (id<0 || id=="new"){
-        $("#editPlanIDField        span").html("new")
-        $("#editPlanIDField        input").val("")
-        $("#editPlanStartField     input").val("")
-        $("#editPlanEndField       input").val("")
-        $("#editPlanNotesField  textarea").val("")
-
-        $("#editPlan").modal()
-    }
-    else {
-      store.load("Plan",id,{ include: "" }).subscribe(function (plan) {
-        $("#editPlanIDField        span").html(plan.id)
-        $("#editPlanIDField        input").val(plan.id)
-        $("#editPlanStartField     input").val(plan.start)
-        $("#editPlanEndField       input").val(plan.end)
-        $("#editPlanNotesField  textarea").val(plan.notes)
-
-        $("#editPlan").modal()
-      });
-    }
-  }
-  function savePlan(){
-    var planID=$("#editPlanIDField    span").html();
-    var planFromEditor={
-      start:  $("#editPlanStartField     input").val(),
-      end:    $("#editPlanEndField       input").val(),
-      notes:  $("#editPlanNotesField  textarea").val(),
-    };
-
-    if (planFromEditor.start.match(/\d+$/) == null) { alert("Wrong start date"); return false; }
-    if (planFromEditor.start<20220101 || planFromEditor.start>21221231) { alert("Wrong start date"); return false; }
-    if (planFromEditor.end.match(/\d+$/)   == null) { alert("Wrong end date");   return false; }
-    if (planFromEditor.end<20220101 || planFromEditor.end>21221231) { alert("Wrong end date"); return false; }
-    if (planFromEditor.end<planFromEditor.start) { alert("end date cannot be before start date"); return false; }
-
-    if (planID<0 || planID=="new"){
-      store.create("Plan", planFromEditor).subscribe(function (plan) {
-        $("#editPlanIDField  span").html(plan.id)
-        editPlan(plan.id)
-        alert("Created plan #"+plan.id)
-        loadPlans()
-      });      
-    }
-    else {
-      store.update("Plan", planID, planFromEditor).subscribe(function (plan) {
-        editPlan(plan.id)
-        alert("Saved plan #"+plan.id)
-        loadPlans()
-      });      
-    }
-  }
-
-  function loadPlans(){
-    $("#plansList").html("");
-    store.loadAll(
-      "Plan", 
-      { sort: "start" }
-    ).subscribe(function (Plans) {
-      Plans.sort(function(a, b) {
-        return a.start>b.start;
-      });
-      $.each( Plans, function( idx, plan ) {
-        var start = formatDate(plan.start)
-        var end   = formatDate(plan.end)
-        $("#plansList").append(
-          `<li>`+
-            `<a href="/plan/${plan.id}">${start} - ${end} (plan #${plan.id})</a>`+
-            `&nbsp;`+
-            `<button type='button' class='btn-for-writer btn btn-info btn-sm' onClick='editPlan(${plan.id})'>edit</button>`+
-          `</li>`
-        );
-      });
+      $("#editPlan").modal()
     });
   }
+}
+function savePlan(){
+  var planID=$("#editPlanIDField    span").html();
+  var planFromEditor={
+    start:  $("#editPlanStartField     input").val(),
+    end:    $("#editPlanEndField       input").val(),
+    notes:  $("#editPlanNotesField  textarea").val(),
+  };
 
-  function checkAuth(){
-    // TODO: this should check headers from authelia in future
-    return;
-    $.getJSON('/auth_check', function(data) { 
-      if (data.upn!="anonymous"){
-        $("#upn").text(data.upn)
-        $("#loginbtn").hide()
-        console.log(data)
-      }
-      else {
-        $("#logoutbtn").hide()
-      }
+  if (planFromEditor.start.match(/\d+$/) == null) { alert("Wrong start date"); return false; }
+  if (planFromEditor.start<20220101 || planFromEditor.start>21221231) { alert("Wrong start date"); return false; }
+  if (planFromEditor.end.match(/\d+$/)   == null) { alert("Wrong end date");   return false; }
+  if (planFromEditor.end<20220101 || planFromEditor.end>21221231) { alert("Wrong end date"); return false; }
+  if (planFromEditor.end<planFromEditor.start) { alert("end date cannot be before start date"); return false; }
 
-      if (!data.writer){
-        $(".btn-for-writer").each(function(){
-          $(this).attr('disabled', 'disabled');
-        })
-      }
-    }); 
+  if (planID<0 || planID=="new"){
+    store.create("Plan", planFromEditor).subscribe(function (plan) {
+      $("#editPlanIDField  span").html(plan.id)
+      editPlan(plan.id)
+      alert("Created plan #"+plan.id)
+      loadPlans()
+    });      
   }
+  else {
+    store.update("Plan", planID, planFromEditor).subscribe(function (plan) {
+      editPlan(plan.id)
+      alert("Saved plan #"+plan.id)
+      loadPlans()
+    });      
+  }
+}
 
-  $(function() {
-    checkAuth()
-    loadPlans()
+function loadPlans(){
+  $("#plansList").html("");
+  store.loadAll(
+    "Plan", 
+    { sort: "start" }
+  ).subscribe(function (Plans) {
+    Plans.sort(function(a, b) {
+      return a.start>b.start;
+    });
+    $.each( Plans, function( idx, plan ) {
+      var start = formatDate(plan.start)
+      var end   = formatDate(plan.end)
+      $("#plansList").append(
+        `<li>`+
+          `<a href="/plan/${plan.id}">${start} - ${end} (plan #${plan.id})</a>`+
+          `&nbsp;`+
+          `<button type='button' class='btn-for-writer btn btn-info btn-sm' onClick='editPlan(${plan.id})'>edit</button>`+
+        `</li>`
+      );
+    });
   });
+}
 
-  store.define([ "Plan" ], {
-    start: Store.attr(),
-    end:   Store.attr(),
-    notes: Store.attr(),
-  });
+function checkAuth(){
+  // TODO: this should check headers from authelia in future
+  return;
+  $.getJSON('/auth_check', function(data) { 
+    if (data.upn!="anonymous"){
+      $("#upn").text(data.upn)
+      $("#loginbtn").hide()
+      console.log(data)
+    }
+    else {
+      $("#logoutbtn").hide()
+    }
 
-  store.observable.subscribe(function (event) {
-    //console.log(event.name, event.type, event.id, event.resource);
-  });
+    if (!data.writer){
+      $(".btn-for-writer").each(function(){
+        $(this).attr('disabled', 'disabled');
+      })
+    }
+  }); 
+}
+
+$(function() {
+  checkAuth()
+  loadPlans()
+});
+
+store.define([ "Plan" ], {
+  start: Store.attr(),
+  end:   Store.attr(),
+  notes: Store.attr(),
+});
+
+store.observable.subscribe(function (event) {
+  //console.log(event.name, event.type, event.id, event.resource);
+});
 </script>
 </body>
 </html>

@@ -44,3 +44,21 @@ ul, ol, h4, h3, h2, h1{
   text-align: right;
   padding-right: 5px;
 }
+
+
+.date_header, .date, .weekday, .together, .person {
+  border:  1px solid black;
+  padding: 5px;
+}
+.date_header, .together, .person {
+  text-align: center;
+}
+.date {
+  text-align: right;
+}
+.weekday {
+  text-align: left;
+}
+.person {
+  width: 32em;
+}

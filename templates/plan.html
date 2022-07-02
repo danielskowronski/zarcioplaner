@@ -7,7 +7,6 @@
   <script src="/static/json-api-store.prod.js"></script>
   <link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="/static/style.css" />
-  <link rel="stylesheet" type="text/css" href="/scloud_assets/scloud.css" />
   <link rel="icon" type="image/png" href="/static/dish.png">
 </head>
 <body>
@@ -23,24 +22,198 @@
 
   <i>{{ plan_notes }}</i>
   <br /><br />
+  <button type='button' class='btn-for-writer btn btn-success' onClick='alert("not yet implemenetd");print()'>Print</button>
+  <br /><br />
 
-  <table border=4>
+  <table>
     <tr>
-      <th colspan=2>ŻARCIOPLAN</th>
-      <th>{{ person1 }}</th>
-      <th>{{ person2 }}</th>
+      <th class="date_header" colspan=2>ŻARCIOPLAN</th>
+      <th class="together">together?</th>
+      <th class="person"  >{{ person1 }}</th>
+      <th class="person"  >{{ person2 }}</th>
     </tr>
     {% for date in range(plan_start, plan_end+1) %}
-    <tr>
-      <td>{{ formatDate(date) }}</td>
-      <td>{{ getWeekDay(date) }}</td>
-      <td data-date="{{ date }}" data-person="1">x</td>
-      <td data-date="{{ date }}" data-person="2">x</td>
+    <tr class="entry" data-date="{{ date }}">
+      <td class="date">{{ formatDate(date) }}</td>
+      <td class="weekday">{{ getWeekDay(date) }}</td>
+      <td class="together" data-date="{{ date }}" data-person="0">
+        <button type='button' class='btn btn-info btn-sm' onClick='changeEntryTogether({{ date }})'>change</button>
+      </td>
+      <td class="person"   data-date="{{ date }}" data-person="1">
+        <span class="entryValue"></span> 
+        <button type='button' class='btn btn-info btn-sm' onClick='changeEntryValue({{ date }}, 1)'>edit</button>
+      </td>
+      <td class="person"   data-date="{{ date }}" data-person="2">
+        <span class="entryValue"></span> 
+        <button type='button' class='btn btn-info btn-sm' onClick='changeEntryValue({{ date }}, 2)'>edit</button>
+      </td>
     </tr>
     {% endfor %}
   </table>
 
 <script>
+window.plan_id = {{ plan_id }};
+window.person = [ "", "{{ person1 }}", "{{ person2 }}" ];
+
+var adapter = new Store.AjaxAdapter({ base: "/api" });
+var store = new Store(adapter);
+
+function getEntryValueUI(entry_date, person) {
+  return $(`[data-date=${entry_date}][data-person=${person}] span`).html()
+}
+function setEntryValueUI(entry_date, person, value) {
+  $(`[data-date=${entry_date}][data-person=${person}] span`).html(value)
+}
+
+function loadEntries(){
+  $("tr.entry").each(function(key, value) { loadEntry( $(value).attr("data-date") ); } );
+}
+
+
+
+function loadEntry(entry_date) {
+  setEntryValueUI(entry_date, 1, "loading...");
+  setEntryValueUI(entry_date, 2, "loading.....");
+
+  var entriesMatching = store.findAll("Entry").filter(function (entry) {
+    return entry.date == entry_date
+  });
+
+  if (entriesMatching.length==0) {
+    store.create(
+      "Entry",
+      { 
+        "plan_id": window.plan_id,
+        "date": entry_date,
+        "person1": "...",
+        "person2": ".....",
+        "together": false
+      }
+    ).subscribe((product) => {
+      var entriesMatching = store.findAll("Entry").filter(function (entry) {
+        return entry.date == entry_date
+      });
+      loadEntry(entry_date);
+    });
+
+    return;    
+  } 
+
+  var entry = entriesMatching[0];
+
+  setEntryTogetherUI(entry_date, entry.together)
+  setEntryValueUI(entry_date, 1, entry.person1)
+  setEntryValueUI(entry_date, 2, entry.person2)
+  $(`tr[data-date=${entry_date}]`).attr("data-entry-id", entry.id)
+}
+
+function changeEntryTogether(date){
+  var entry_id = $(`tr[data-date=${date}]`).attr("data-entry-id")
+
+  var person1 = $(`[data-date=${date}][data-person=1]`)
+  var person2 = $(`[data-date=${date}][data-person=2]`)
+  var wasTogether = $(person1).attr("colspan")==2
+
+  if (wasTogether) {
+    setEntryTogetherUI(date, false)
+  }
+  else {
+    setEntryTogetherUI(date, true)
+  }
+  store.update(
+    "Entry",
+    entry_id,
+    {
+      together: !wasTogether
+    }
+  ).subscribe((entry) => {
+    alert(`Updated entry #${entry_id}`)
+    loadEntry(date)
+  });
+}
+
+function setEntryTogetherUI(date, together){
+  var person1 = $(`[data-date=${date}][data-person=1]`)
+  var person2 = $(`[data-date=${date}][data-person=2]`)
+
+  if (! together) {
+    $(person1).attr("colspan", "1")
+    $(person2).show()
+  }
+  else {
+    $(person1).attr("colspan", "2")
+    $(person2).hide()
+  }
+}
+function changeEntryValue(date, person){
+  var entry_id = $(`tr[data-date=${date}]`).attr("data-entry-id")
+  var oldValue = getEntryValueUI(date, person)
+  var newValue = prompt(`Change for ${window.person[person]} for ${date}`, oldValue)
+
+  var personLabel = person==1 ? "person1" : "person2";
+  var updated_data = {}
+  updated_data[personLabel]=newValue;
+
+  store.update(
+    "Entry",
+    entry_id,
+    updated_data
+  ).subscribe((entry) => {
+    //alert(`Updated entry #${entry_id}`)
+    loadEntry(date)
+  });
+}
+
+function checkAuth(){
+  // TODO: this should check headers from authelia in future
+  return;
+  $.getJSON('/auth_check', function(data) { 
+    if (data.upn!="anonymous"){
+      $("#upn").text(data.upn)
+      $("#loginbtn").hide()
+      console.log(data)
+    }
+    else {
+      $("#logoutbtn").hide()
+    }
+
+    if (!data.writer){
+      $(".btn-for-writer").each(function(){
+        $(this).attr('disabled', 'disabled');
+      })
+    }
+  }); 
+}
+
+store.define([ "Entry" ], {
+  plan_id:  Store.attr(),
+  date:     Store.attr(),
+  person1:  Store.attr(),
+  person2:  Store.attr(),
+  together: Store.attr(),
+});
+
+function refresh(){
+  store.loadAll(
+    "Entry",
+    { 
+      "filter[plan_id]": window.plan_id,
+    }
+  ).subscribe( function(Entries) {
+    loadEntries();
+  });
+}
+
+$(function() {
+  checkAuth()
+
+  refresh()
+});
+
+store.observable.subscribe(function (event) {
+  //console.log(event.name, event.type, event.id, event.resource);
+});
+
 </script>
 </body>
 </html>

@@ -23,6 +23,6 @@ class Entry(SAFRSBase, db.Model):
 
   person1     = db.Column(db.String(512))
   person1_url = db.Column(db.String(1024))
-  person1     = db.Column(db.String(512))
+  person2     = db.Column(db.String(512))
   person2_url = db.Column(db.String(1024))
   together    = db.Column(db.Boolean())
