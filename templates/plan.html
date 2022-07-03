@@ -46,12 +46,10 @@
         <button type='button' class='btn btn-info btn-sm' onClick='changeEntryTogether({{ date }})'>change</button>
       </td>
       <td class="person"   data-date="{{ date }}" data-person="1">
-        <span class="entryValue"></span> 
-        <button type='button' class='btn btn-info btn-sm' onClick='changeEntryValue({{ date }}, 1)'>edit</button>
+        <a onClick='changeEntryValue({{ date }}, 1)'><span class="entryValue"></span></a>
       </td>
       <td class="person"   data-date="{{ date }}" data-person="2">
-        <span class="entryValue"></span> 
-        <button type='button' class='btn btn-info btn-sm' onClick='changeEntryValue({{ date }}, 2)'>edit</button>
+        <a onClick='changeEntryValue({{ date }}, 2)'><span class="entryValue"></span></a>
       </td>
     </tr>
     {% endfor %}
@@ -133,7 +131,7 @@ function changeEntryTogether(date){
       together: !wasTogether
     }
   ).subscribe((entry) => {
-    alert(`Updated entry #${entry_id}`)
+    //alert(`Updated entry #${entry_id}`)
     loadEntry(date)
   });
 }
@@ -155,6 +153,7 @@ function changeEntryValue(date, person){
   var entry_id = $(`tr[data-date=${date}]`).attr("data-entry-id")
   var oldValue = getEntryValueUI(date, person)
   var newValue = prompt(`Change for ${window.person[person]} for ${date}`, oldValue)
+  if (newValue==null) { return; }
 
   var personLabel = person==1 ? "person1" : "person2";
   var updated_data = {}

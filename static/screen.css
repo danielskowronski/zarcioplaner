@@ -26,3 +26,8 @@ ul, ol, h4, h3, h2, h1{
 .date_header, .date, .weekday, .together, .person {
   padding: 5px;
 }
+
+.entryValue{
+  padding-left: 5px;
+  padding-right: 5px;
+}

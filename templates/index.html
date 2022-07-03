@@ -45,8 +45,8 @@
             <table class="editPlanTable">
               <!-- TODO: proper date picker -->
               <tr><td class="editTableFieldName">plan #</td> <td id="editPlanIDField"><span></span></td></tr>
-              <tr><td class="editTableFieldName">start</td>  <td id="editPlanStartField"><input type="number" min="20220000" max="212200" /></tr>
-              <tr><td class="editTableFieldName">end</td>    <td id="editPlanEndField"><input type="number" min="20220000" max="212200" /></tr>
+              <tr><td class="editTableFieldName">start</td>  <td id="editPlanStartField"><input  type="date" min="20220000" max="212200" /></tr>
+              <tr><td class="editTableFieldName">end</td>    <td id="editPlanEndField"><input  type="date" min="20220000" max="212200" /></tr>
               <tr><td class="editTableFieldName">notes</td>  <td id="editPlanNotesField"><textarea rows="2" cols="30"></textarea></tr> 
               <tr><td class="editTableFieldName">image</td>  <td id="editPlanImgField"><textarea rows="1" cols="30"></textarea></tr> 
             </table>
@@ -66,20 +66,27 @@
 var adapter = new Store.AjaxAdapter({ base: "/api" });
 var store = new Store(adapter);
 
-function formatDate(raw){
+function formatShortDate(raw){
   var raw_str=`${raw}`;
   if (raw_str.length!=8) return "????-??-??";
   return ""+raw_str.substr(0,4)+"-"+raw_str.substr(4,2)+"-"+raw_str.substr(6,2);
+}
+
+function jsDateToShortDate(date){
+  return date.getFullYear()*10000+(date.getMonth()+1)*100+date.getDate()
+}
+function datePickerToShortDate(date){
+  return date.substr(0,4)*10000+(date.substr(4,2)+1)*100+date.substr(6,2)
 }
 
 function editPlan(id){
   if (id<0 || id=="new"){
       $("#editPlanIDField        span").html("new")
       $("#editPlanIDField        input").val("")
-      $("#editPlanStartField     input").val("")
-      $("#editPlanEndField       input").val("")
+      $("#editPlanStartField     input").val(formatShortDate(jsDateToShortDate(new Date())))
+      $("#editPlanEndField       input").val(formatShortDate(jsDateToShortDate(new Date())))
       $("#editPlanNotesField  textarea").val("")
-      $("#editPlanImgField    textarea").val("")
+      $("#editPlanImgField    textarea").val("https://pbs.twimg.com/media/DUfDNvTVQAA2osS.jpg:large")
 
       $("#editPlan").modal()
   }
@@ -87,8 +94,8 @@ function editPlan(id){
     store.load("Plan",id,{ include: "" }).subscribe(function (plan) {
       $("#editPlanIDField        span").html(plan.id)
       $("#editPlanIDField        input").val(plan.id)
-      $("#editPlanStartField     input").val(plan.start)
-      $("#editPlanEndField       input").val(plan.end)
+      $("#editPlanStartField     input").val(formatShortDate(plan.start))
+      $("#editPlanEndField       input").val(formatShortDate(plan.end))
       $("#editPlanNotesField  textarea").val(plan.notes)
       $("#editPlanImgField    textarea").val(plan.img)
 
@@ -99,8 +106,8 @@ function editPlan(id){
 function savePlan(){
   var planID=$("#editPlanIDField    span").html();
   var planFromEditor={
-    start:  $("#editPlanStartField     input").val(),
-    end:    $("#editPlanEndField       input").val(),
+    start:  $("#editPlanStartField     input").val().replace("-","").replace("-",""),
+    end:    $("#editPlanEndField       input").val().replace("-","").replace("-",""),
     notes:  $("#editPlanNotesField  textarea").val(),
     img:    $("#editPlanImgField    textarea").val(),
   };
@@ -135,11 +142,11 @@ function loadPlans(){
     { sort: "start" }
   ).subscribe(function (Plans) {
     Plans.sort(function(a, b) {
-      return a.start>b.start;
+      return a.start-b.start;
     });
     $.each( Plans, function( idx, plan ) {
-      var start = formatDate(plan.start)
-      var end   = formatDate(plan.end)
+      var start = formatShortDate(plan.start)
+      var end   = formatShortDate(plan.end)
       $("#plansList").append(
         `<li>`+
           `<a href="/plan/${plan.id}">${start} - ${end} (plan #${plan.id})</a>`+

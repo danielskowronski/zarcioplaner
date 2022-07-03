@@ -13,8 +13,8 @@
 
 body {
   padding: 2px;
-  position: absolute;
-  bottom: 10px;
+  /*position: absolute;
+  bottom: 10px;*/
 }
 
 .date_header { width: 20%; }
